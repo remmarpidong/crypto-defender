@@ -1,4 +1,5 @@
 import time
+import json
 
 from binance import Client
 from binance.exceptions import BinanceAPIException
@@ -108,18 +109,22 @@ def main():
         try:
             price = get_latest_price(SYMBOL)
             if price:
-                print(f"The price of {SYMBOL} is: {price}")
+                print(f"The price of {SYMBOL} is: {price:.8f}")
             # Check if there are any open orders for the symbol
             #buy_crypto(price)
             orders = client.get_open_orders(symbol=SYMBOL)
-            print(orders)
-            Bprice=float(orders[-1]['price'])
+            #print(orders)
+            
             if not orders:
                 # Get the latest price of the trading pair
                 buy_crypto(price)
             else:
-                print(f"Open orders found for {SYMBOL}.")
-               
+                
+                print(orders)
+                Bprice=float(orders[-1]['price'])
+                Bprice=Bprice * (1 - PROFIT_PERCENTAGE / 100)
+                #print(Bprice)
+                print(f"The position price of {SYMBOL} is: {Bprice:.8f}")
                 percentage_change = ((price - Bprice) / Bprice) * 100
                 print(
                     f"Percentage change from buy price: {percentage_change:.2f}%"
